@@ -2,9 +2,12 @@ package setting
 
 import (
 	"github.com/go-ini/ini"
+	"github.com/juju/ratelimit"
 	"log"
 	"time"
 )
+
+var TokenBucket *ratelimit.Bucket = nil
 
 var (
 	Cfg *ini.File
@@ -20,6 +23,7 @@ var (
 )
 
 func init() {
+
 	var err error
 	Cfg, err = ini.Load("conf/app.ini")
 	if err != nil {
@@ -28,6 +32,7 @@ func init() {
 	LoadBase()
 	LoadServer()
 	LoadApp()
+	LoadBucket()
 }
 
 func LoadBase() {
@@ -57,3 +62,8 @@ func LoadApp() {
 	PageSize = sec.Key("PAGE_SIZE").MustInt(10)
 }
 
+func LoadBucket() {
+	bucketFillDuring := time.Millisecond * 2000
+	bucketMax := 2
+	TokenBucket = ratelimit.NewBucket(bucketFillDuring, int64(bucketMax))
+}
