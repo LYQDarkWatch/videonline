@@ -12,8 +12,8 @@ type Tag struct {
 	Created_Time string `json:"created_time"`
 }
 
-func GetTag(id string) (tags Tag) {
-	db.Where("tag_id=?", id).First(&tags)
+func GetTags() (tags []Tag) {
+	db.Find(&tags)
 	return
 }
 
@@ -27,38 +27,35 @@ func GetTag(id string) (tags Tag) {
 //	return
 //}
 
-//func AddTag(name string, state int, CreatedBy string) bool {
-//	db.Create(&Tag{
-//		Name:name,
-//		State:state,
-//		CreatedBy:CreatedBy,
-//	})
-//	return true
-//}
-//
-//func ExistTagByName(name string) bool {
-//	var tag Tag
-//	db.Select("id").Where("name = ?", name).First(&tag)
-//	if tag.ID > 0 {
-//		return true
-//	}
-//	return false
-//}
-//
-//func ExistTagByID(id int) bool {
-//	var tag Tag
-//	db.Select("id").Where("id=?",id).First(&tag)
-//	if tag.ID >0{
-//		return true
-//	}
-//	return false
-//}
-//
-//func DeleteTag(id int) bool {
-//	db.Where("id = ?",id).Delete(&Tag{})
-//	return true
-//}
-//
+func AddTag(name string, Created_time string) bool {
+	db.Create(&Tag{
+		Tag_Name:     name,
+		Created_Time: Created_time,
+	})
+	return true
+}
+
+func ExistTagByName(name string) bool {
+	var tag Tag
+	if result := db.Select("tag_id").Where("tag_name = ?", name).First(&tag).Error; result != nil {
+		return false
+	}
+	return true
+}
+
+func ExistTagByID(id string) bool {
+	var tag Tag
+	if result := db.Select("tag_id").Where("tag_id=?", id).First(&tag).Error; result != nil {
+		return false
+	}
+	return true
+}
+
+func DeleteTag(id string) bool {
+	db.Where("tag_id = ?", id).Delete(&Tag{})
+	return true
+}
+
 //func EditTag(id int,data interface{}) bool {
 //	db.Model(&Tag{}).Where("id= ?",id).Update(data)
 //	return true

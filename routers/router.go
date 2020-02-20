@@ -23,16 +23,18 @@ func InitRouter() *gin.Engine {
 	apiv1 := r.Group("api/v1")
 	apiv1.Use(jwt.JWT())
 	{
+		apiv1.POST("/admin/editadmin", api.EditAdminInfo)
+		//升级会员
 		apiv1.POST("/bevip", api.BecomeVip)
-		//获取标签
-		//apiv1.GET("/tags", v1.GetTags)
-		////新建标签
-		//apiv1.POST("/tags",v1.AddTag)
+		//获取所有标签
+		apiv1.GET("/tags/getalltags", v1.GetTags)
+		//新建标签
+		apiv1.POST("/tags/addtag", v1.AddTag)
 		////更新指定标签
 		//apiv1.PUT("/tags/:id", v1.EditTag)
 		////删除指定标签
-		//apiv1.DELETE("/tags/:id",v1.DeleteTag)
-		////获取视频列表
+		apiv1.DELETE("/tags/deletetag", v1.DeleteTag)
+		//获取视频列表
 		apiv1.GET("videos", v1.GetVideos)
 		////获取指定视频
 		//apiv1.GET("videos/:id",v1.GetVideo)
