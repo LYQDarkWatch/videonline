@@ -98,18 +98,21 @@ func EditAdminInfo(c *gin.Context) {
 	c.BindJSON(&a)
 	id := a.Admin_ID
 	password := a.Admin_Passwd
-	println(password)
 	displayname := a.Admin_display
-	println(displayname)
 	data := make(map[string]interface{})
 	data["admin_display"] = displayname
 	data["admin_passwd"] = password
-	log.Println(data)
-	println(id)
 	code := error.INVALID_PARAMS
-	if models.EditAdminInfo(id, data) == true {
-		code = error.SUCCESS
+	if models.ExistAdminByID(id) == true {
+		if models.EditAdminInfo(displayname, id, data) == true {
+			code = error.SUCCESS
+		} else {
+			code = error.ERROR_NOT_SAME_ADMIN
+		}
+	} else {
+		code = error.ERROR_ADMIN_NOT_EXIST
 	}
+
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),

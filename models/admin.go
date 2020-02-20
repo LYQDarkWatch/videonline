@@ -32,12 +32,18 @@ func CreateAdmin(username, password, displayname, createdtime string) bool {
 	return false
 }
 
-func EditAdminInfo(id string, data interface{}) bool {
-	if ExistAdminByID(id) == true {
+func EditAdminInfo(display string, id string, data interface{}) bool {
+	if ExistAdminByDisplay(display) == false {
 		db.Model(&Admin{}).Where("admin_id= ?", id).Update(data)
 		return true
 	}
 	return false
+}
+func ExistAdminByDisplay(displayname string) bool {
+	if result := db.Select("admin_display").Where("admin_display=?", displayname).First(&admin).Error; result != nil {
+		return false
+	}
+	return true
 }
 func ExistAdminByID(id string) bool {
 	if result := db.Select("admin_id").Where("admin_id=?", id).First(&admin).Error; result != nil {
