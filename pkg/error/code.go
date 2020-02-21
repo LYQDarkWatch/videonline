@@ -15,4 +15,5 @@ const (
 	ERROR_AUTH                     = 20004
 	ERROR_ADMIN_NOT_EXIST          = 20005
 	ERROR_NOT_SAME_ADMIN           = 20006
+	ERROR_NOT_SEARCH               = 401
 )

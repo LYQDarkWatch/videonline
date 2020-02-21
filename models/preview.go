@@ -31,3 +31,9 @@ func GetVideoByTag(id string) (priviewbytag []Preview) {
 	db.Where("tag_id = ?", id).Preload("Priview_Tag").Find(&priviewbytag)
 	return
 }
+
+//搜索视频
+func SearchVideoByName(name string) (search []Preview) {
+	db.Where("video_name like ?", "%"+name+"%").Find(&search)
+	return
+}

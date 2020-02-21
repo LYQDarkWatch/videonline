@@ -47,6 +47,14 @@ func ExistVideoByID(id string) bool {
 	return true
 }
 
+//检查视频是否存在
+func ExistVideoByName(name string) bool {
+	if result := db.Select("video_name").Where("video_name=?", name).First(&video).Error; result != nil {
+		return false
+	}
+	return true
+}
+
 //func GetArticleTotal(maps interface{}) (count int) {
 //	db.Model(&Article{}).Where(maps).Count(&count)
 //	return

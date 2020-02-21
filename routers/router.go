@@ -57,6 +57,8 @@ func InitRouter() *gin.Engine {
 
 		//播放指定视频
 		apiv1.GET("/video/play", v1.StreamHandler)
+		//搜索视频
+		apiv1.GET("/video/search", v1.SearchVideo)
 		apiv1.POST("/video/upload/:vid-id", v1.UploadHandler)
 		//获取所有免费视频
 		apiv1.GET("/video/getallfree", v1.GetAllFreePriview)

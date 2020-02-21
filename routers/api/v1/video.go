@@ -124,6 +124,26 @@ const (
 	VIDEO_DIR = "D:/videos/"
 )
 
+//搜索视频
+func SearchVideo(c *gin.Context) {
+	name := c.Query("video_name")
+	data := make(map[string]interface{})
+	//code := error.INVALID_PARAMS
+	models.SearchVideoByName(name)
+	//if models.ExistVideoByName(name) == true{
+	data["list"] = models.SearchVideoByName(name)
+	code := error.SUCCESS
+	//} else {
+	//	code = error.ERROR_NOT_SEARCH
+	//}
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//播放视频
 func StreamHandler(c *gin.Context) {
 	//bucket := bucketoken.NewConnLimiter(2)
 	//if bucket.GetToken(1) == false{
@@ -175,18 +195,18 @@ func UploadHandler(c *gin.Context) {
 
 }
 
-func IScunzai(c *gin.Context) {
-	id := c.Query("vid")
-	println(id)
-	if models.ExistVideoByID(id) == true {
-		c.JSON(http.StatusOK, gin.H{
-			"code": "200",
-			"msg":  "此视频存在",
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"code": "400",
-			"msg":  "此视频不存在",
-		})
-	}
-}
+//func IScunzai(c *gin.Context) {
+//	id := c.Query("vid")
+//	println(id)
+//	if models.ExistVideoByID(id) == true {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code": "200",
+//			"msg":  "此视频存在",
+//		})
+//	} else {
+//		c.JSON(http.StatusOK, gin.H{
+//			"code": "400",
+//			"msg":  "此视频不存在",
+//		})
+//	}
+//}

@@ -13,6 +13,7 @@ var MsgFlags = map[int]string{
 	ERROR_AUTH:                     "token错误",
 	ERROR_ADMIN_NOT_EXIST:          "该用户不存在",
 	ERROR_NOT_SAME_ADMIN:           "用户名重复",
+	ERROR_NOT_SEARCH:               "没有找到相关视频",
 }
 
 func GetMsg(code int) string {
