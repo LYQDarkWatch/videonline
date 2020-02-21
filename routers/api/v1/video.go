@@ -89,7 +89,7 @@ func GetAllFreePriview(c *gin.Context) {
 	})
 }
 
-//获取所有免费视频
+//获取所有VIP视频
 func GetAllVipPriview(c *gin.Context) {
 	//maps := make(map[string]interface{})
 	data := make(map[string]interface{})
@@ -133,9 +133,6 @@ func SearchVideo(c *gin.Context) {
 	//if models.ExistVideoByName(name) == true{
 	data["list"] = models.SearchVideoByName(name)
 	code := error.SUCCESS
-	//} else {
-	//	code = error.ERROR_NOT_SEARCH
-	//}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),

@@ -14,6 +14,8 @@ var MsgFlags = map[int]string{
 	ERROR_ADMIN_NOT_EXIST:          "该用户不存在",
 	ERROR_NOT_SAME_ADMIN:           "用户名重复",
 	ERROR_NOT_SEARCH:               "没有找到相关视频",
+	ERROR_USER_EXIST:               "该用户名已存在，请修改",
+	ERROT_EXIST_USER_DISPLAY:       "该昵称已存在，请修改后提交",
 }
 
 func GetMsg(code int) string {

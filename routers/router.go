@@ -17,15 +17,15 @@ func InitRouter() *gin.Engine {
 	r.Use(cors.Cors())
 
 	gin.SetMode(setting.RunMode)
-	r.POST("/login", api.GetAdmin)
-	r.POST("/register", api.CreateAdmin)
-
+	r.POST("/user/login", api.GetUser)
+	r.POST("/user/register", api.CreateUser)
 	apiv1 := r.Group("api/v1")
 	apiv1.Use(jwt.JWT())
 	{
-		apiv1.POST("/admin/editadmin", api.EditAdminInfo)
+		//修改用户资料
+		apiv1.POST("/user/edituser", api.EditUserInfo)
 		//升级会员
-		apiv1.POST("/bevip", api.BecomeVip)
+		apiv1.POST("/user/bevip", api.BecomeVip)
 		//获取所有标签
 		apiv1.GET("/tags/getalltags", v1.GetTags)
 		//新建标签

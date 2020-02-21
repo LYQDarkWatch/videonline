@@ -16,4 +16,9 @@ const (
 	ERROR_ADMIN_NOT_EXIST          = 20005
 	ERROR_NOT_SAME_ADMIN           = 20006
 	ERROR_NOT_SEARCH               = 401
+	ERROT_EXIST_USER_DISPLAY       = 402
+)
+
+const (
+	ERROR_USER_EXIST = 300
 )
