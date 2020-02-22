@@ -5,6 +5,8 @@ import (
 	//"fmt"
 	//"github.com/Unknwon/com"
 	"github.com/gin-gonic/gin"
+	"strconv"
+
 	//"github.com/juju/ratelimit"
 
 	//"github.com/juju/ratelimit"
@@ -43,6 +45,7 @@ func GetVideoByID(c *gin.Context) {
 	//	}
 	//}
 	if models.ExistVideoByID(id) == true {
+		models.VideoPlaySum(id)
 		data = models.GetVideoByID(id)
 		code = error.SUCCESS
 	} else {
@@ -58,8 +61,9 @@ func GetVideoByID(c *gin.Context) {
 //按分类获取多个视频
 func GetVideosByTag(c *gin.Context) {
 	id := c.Query("tag_id")
+	k, _ := strconv.Atoi(id)
 	data := make(map[string]interface{})
-	data["lists"] = models.GetVideoByTag(id)
+	data["lists"] = models.GetVideoByTag(k)
 	code := error.SUCCESS
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,

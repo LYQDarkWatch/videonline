@@ -29,6 +29,7 @@ type Info struct {
 //}
 //
 var video Info
+var preview Preview
 
 //获取单个视频详情
 func GetVideoByID(id string) (video Info) {
@@ -37,6 +38,20 @@ func GetVideoByID(id string) (video Info) {
 		//db.Model(&video).Related(&video.Video_Tag)
 	}
 	return
+}
+
+//访问视频增加访问总数
+func VideoPlaySum(id string) bool {
+	db.Select("video_id").Where("video_id = ?", id).First(&video).Exec("UPDATE video_info SET play_sum = play_sum + 1")
+	db.Select("video_id").Where("video_id = ?", id).First(&preview).Exec("UPDATE video_preview SET play_sum = play_sum + 1")
+	return true
+}
+
+//收藏数增加
+func VideoStarSum(id string) bool {
+	db.Select("video_id").Where("video_id = ?", id).First(&video).Exec("UPDATE video_info SET star_sum = star_sum + 1")
+	db.Select("video_id").Where("video_id = ?", id).First(&preview).Exec("UPDATE video_preview SET star_sum = star_sum + 1")
+	return true
 }
 
 //检查视频是否存在

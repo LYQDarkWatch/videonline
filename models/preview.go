@@ -1,14 +1,15 @@
 package models
 
 type Preview struct {
-	Video_ID      int    `gorm:"primary_key" json:"video_id"`
-	Video_Name    string `json:"video_name"`
-	Tag_ID        int    `json:"tag_id"`
-	Priview_Tag   Tag    `json:"video_tag" gorm:"foreignkey:tag_id"`
+	Video_ID   int    ` json:"video_id"`
+	Video_Name string `json:"video_name"`
+	TagID      int    ` json:"tag_id" gorm:"primary_key"`
+	//Tag           Tag    `json:"video_tag" gorm:"ForeignKey:Tag_Id"`
+	Tag           Tag    `gorm:"foreignkey:TagID"`
 	Video_Content string `json:"video_content"`
-	Video_Imgurl  string `json:"video_imgurl"`
 	Video_ImgUrl  string `json:"video_img_url"`
-	Video_HotSum  int    `json:"video_hot_sum"`
+	Play_Sum      int    `json:"play_sum"`
+	Star_Sum      int    `json:"star_sum"`
 	Video_IsVip   int    `json:"video_is_vip"`
 }
 
@@ -27,13 +28,23 @@ func GetAllVipPreview() (vipVideo []Preview) {
 }
 
 //按分类检索视频
-func GetVideoByTag(id string) (priviewbytag []Preview) {
-	db.Where("tag_id = ?", id).Preload("Priview_Tag").Find(&priviewbytag)
-	return
+func GetVideoByTag(id int) (previewbytag []Preview) {
+	//db.Model(&previewbytag).AddForeignKey("tag_id","tag(tag_id)","RESTRICT","RESTRICT")
+	//db.Where("tag_id = ?", id).Preload("Tag").Find(&previewbytag)
+	db.Preload("Tag").Where("tag_id = ?", id).Find(&previewbytag)
+
+	//db.Model(&previewbytag).Preload("Priview_Tag").Where("tag_id=?",id).Find(&previewbytag)
+	//db.Preload("Priview_Tag",id).Find(&previewbytag).Where("tag_id=?",id)
+	return previewbytag
 }
 
 //搜索视频
 func SearchVideoByName(name string) (search []Preview) {
 	db.Where("video_name like ?", "%"+name+"%").Find(&search)
+	return
+}
+
+func GetTagInPreview() (previewbytag []Preview) {
+	db.Preload("Tag").Find(&previewbytag)
 	return
 }

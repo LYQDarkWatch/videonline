@@ -1,6 +1,8 @@
 package models
 
-import "strconv"
+import (
+	"strconv"
+)
 
 type User struct {
 	User_ID      int    `gorm:"primary_key" json:"user_id"`

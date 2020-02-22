@@ -17,6 +17,8 @@ const (
 	ERROR_NOT_SAME_ADMIN           = 20006
 	ERROR_NOT_SEARCH               = 401
 	ERROT_EXIST_USER_DISPLAY       = 402
+	ERROR_NOT_PHONE                = 403
+	ERROR_NOT_EMAIL                = 405
 )
 
 const (

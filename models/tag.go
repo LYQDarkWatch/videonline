@@ -7,7 +7,7 @@ type Tag struct {
 	//CreatedBy string `json:"created_by"`
 	//ModifiedBy string `json:"modified_by"`
 	//State int `json:"state"`
-	Tag_Id       int    `json:"tag_id"`
+	TagId        int    `json:"tag_id"`
 	Tag_Name     string `json:"tag_name"`
 	Created_Time string `json:"created_time"`
 }

@@ -26,10 +26,14 @@ func InitRouter() *gin.Engine {
 		apiv1.POST("/user/edituser", api.EditUserInfo)
 		//升级会员
 		apiv1.POST("/user/bevip", api.BecomeVip)
+		//添加到收藏夹
+		apiv1.GET("/favorite/addfavorite", v1.AddFavorite)
 		//获取所有标签
 		apiv1.GET("/tags/getalltags", v1.GetTags)
 		//新建标签
 		apiv1.POST("/tags/addtag", v1.AddTag)
+		//获取收藏夹视频
+		apiv1.GET("/favorite/getfavorite", v1.GetUserFavorite)
 		////更新指定标签
 		//apiv1.PUT("/tags/:id", v1.EditTag)
 		////删除指定标签

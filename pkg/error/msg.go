@@ -16,6 +16,8 @@ var MsgFlags = map[int]string{
 	ERROR_NOT_SEARCH:               "没有找到相关视频",
 	ERROR_USER_EXIST:               "该用户名已存在，请修改",
 	ERROT_EXIST_USER_DISPLAY:       "该昵称已存在，请修改后提交",
+	ERROR_NOT_PHONE:                "输入的手机号格式错误",
+	ERROR_NOT_EMAIL:                "输入的邮箱格式错误",
 }
 
 func GetMsg(code int) string {
