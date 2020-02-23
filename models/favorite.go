@@ -24,6 +24,15 @@ func AddFavorite(user_id, video_id int, video_name, favorite_time string) bool {
 
 //获取收藏夹视频
 func GetUserFavorite(id int) (allfavorite []Favorite) {
-	db.Where("user_id=?", id).Preload("Preview").Find(&allfavorite)
+	db.Where("user_id=?", id).Preload("Preview").Preload("Preview.Tag").Find(&allfavorite)
 	return allfavorite
+}
+
+//删除收藏夹视频
+func DeleteFavoriteByID(uid, vid int) bool {
+	result := db.Where("user_id = ?", uid).Where("video_id=?", vid).Delete(&favorite).Error
+	if result != nil {
+		return false
+	}
+	return true
 }

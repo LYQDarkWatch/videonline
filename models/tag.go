@@ -7,10 +7,17 @@ type Tag struct {
 	//CreatedBy string `json:"created_by"`
 	//ModifiedBy string `json:"modified_by"`
 	//State int `json:"state"`
-	TagId        int    `json:"tag_id"`
-	Tag_Name     string `json:"tag_name"`
-	Created_Time string `json:"created_time"`
+
+	//
+	//TagId        int    `json:"tag_id"`
+	//Tag_Name     string `json:"tag_name"`
+	//Created_Time string `json:"created_time"`
+	Tag_Id       int
+	Tag_Name     string
+	Created_Time string
 }
+
+var tag Tag
 
 func GetTags() (tags []Tag) {
 	db.Find(&tags)
@@ -36,7 +43,7 @@ func AddTag(name string, Created_time string) bool {
 }
 
 func ExistTagByName(name string) bool {
-	var tag Tag
+
 	if result := db.Select("tag_id").Where("tag_name = ?", name).First(&tag).Error; result != nil {
 		return false
 	}

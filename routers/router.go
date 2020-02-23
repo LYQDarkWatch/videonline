@@ -24,30 +24,48 @@ func InitRouter() *gin.Engine {
 	{
 		//修改用户资料
 		apiv1.POST("/user/edituser", api.EditUserInfo)
+
 		//升级会员
 		apiv1.POST("/user/bevip", api.BecomeVip)
+
 		//添加到收藏夹
 		apiv1.GET("/favorite/addfavorite", v1.AddFavorite)
+
+		//删除指定视频
+		apiv1.GET("/favorite/deletefavorite", v1.DeleteFavoriteByID)
+
 		//获取所有标签
 		apiv1.GET("/tags/getalltags", v1.GetTags)
+
 		//新建标签
 		apiv1.POST("/tags/addtag", v1.AddTag)
+
 		//获取收藏夹视频
 		apiv1.GET("/favorite/getfavorite", v1.GetUserFavorite)
+
+		//添加视频评论
+		apiv1.POST("/video/addcontent", v1.AddContent)
+
 		////更新指定标签
 		//apiv1.PUT("/tags/:id", v1.EditTag)
+
 		////删除指定标签
 		apiv1.DELETE("/tags/deletetag", v1.DeleteTag)
+
 		//获取视频列表
 		apiv1.GET("videos", v1.GetVideos)
-		////获取指定视频
-		//apiv1.GET("videos/:id",v1.GetVideo)
+
 		//新建视频
 		apiv1.POST("/videos", v1.AddVideo)
+
 		//更新视频信息
 		//apiv1.PUT("videos/:id",v1.EditTag)
+
 		//删除视频
 		apiv1.DELETE("/videos/:id", v1.DeleteVideo)
+
+		//删除评论
+		apiv1.GET("/video/deletecontent", v1.DeleteContent)
 		//获取文章列表
 		//apiv1.GET("/articles",v1.GetArticles)
 		////获取指定文章
@@ -63,6 +81,7 @@ func InitRouter() *gin.Engine {
 		apiv1.GET("/video/play", v1.StreamHandler)
 		//搜索视频
 		apiv1.GET("/video/search", v1.SearchVideo)
+
 		apiv1.POST("/video/upload/:vid-id", v1.UploadHandler)
 		//获取所有免费视频
 		apiv1.GET("/video/getallfree", v1.GetAllFreePriview)

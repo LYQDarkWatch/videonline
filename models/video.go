@@ -1,19 +1,22 @@
 package models
 
+import "github.com/jinzhu/gorm"
+
 type Info struct {
-	Video_Id     int    `json:"video_id" gorm:"primary_key"`
-	Video_Name   string `json:"video_name"`
-	Video_Info   string `json:"video_info"`
-	Tag_ID       int    `json:"tag_id"`
-	Video_Tag    Tag    `json:"video_tag" gorm:"foreignkey:tag_id"`
-	Video_Url    string `json:"video_url"`
-	Video_Actor  string `json:"video_actor"`
-	Video_Logo   string `json:"video_logo"`
-	First_Upload string `json:"first_upload"`
-	Last_Update  string `json:"last_update"`
-	Play_Sum     int    `json:"play_sum"`
-	Star_Sum     int    `json:"star_sum"`
-	Commont_Sum  int    `json:"commont_sum"`
+	Video_Id     int       `gorm:"primary_key" json:"video_id"`
+	Video_Name   string    `json:"video_name"`
+	Video_Info   string    `json:"video_info"`
+	Tag_ID       int       `json:"tag_id"`
+	Video_Tag    Tag       `gorm:"ForeignKey:Tag_ID;AssociationForeignKey:Tag_ID"`
+	Video_Url    string    `json:"video_url"`
+	Video_Actor  string    `json:"video_actor"`
+	Video_Logo   string    `json:"video_logo"`
+	First_Upload string    `json:"first_upload"`
+	Last_Update  string    `json:"last_update"`
+	Play_Sum     int       `json:"play_sum"`
+	Star_Sum     int       `json:"star_sum"`
+	Content_Sum  int       `json:"content_sum"`
+	Content      []Content `gorm:"foreignkey:video_id"`
 }
 
 //func (article *Article) BeforeCreate(scope gorm.Scope) error {
@@ -33,17 +36,16 @@ var preview Preview
 
 //获取单个视频详情
 func GetVideoByID(id string) (video Info) {
-	if ExistVideoByID(id) == true {
-		db.Where("video_id = ?", id).Preload("Video_Tag").First(&video)
-		//db.Model(&video).Related(&video.Video_Tag)
-	}
+	db.Where("video_id = ?", id).Preload("Video_Tag").Preload("Content").First(&video)
 	return
 }
 
 //访问视频增加访问总数
 func VideoPlaySum(id string) bool {
-	db.Select("video_id").Where("video_id = ?", id).First(&video).Exec("UPDATE video_info SET play_sum = play_sum + 1")
-	db.Select("video_id").Where("video_id = ?", id).First(&preview).Exec("UPDATE video_preview SET play_sum = play_sum + 1")
+	//db.Select("video_id").Where("video_id = ?", id).First(&video).Exec("UPDATE video_info SET play_sum = play_sum + 1")
+	//db.Select("video_id").Where("video_id = ?", id).First(&preview).Exec("UPDATE video_preview SET play_sum = play_sum + 1")
+	db.Model(&video).Where("video_id = ?", id).Update("play_sum", gorm.Expr("play_sum + 1"))
+	db.Model(&preview).Where("video_id = ?", id).Update("play_sum", gorm.Expr("play_sum + 1"))
 	return true
 }
 

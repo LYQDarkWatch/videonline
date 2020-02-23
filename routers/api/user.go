@@ -22,6 +22,7 @@ type user struct {
 	Priority     int
 	User_Phone   string
 	User_Email   string
+	Login_time   string
 }
 
 var a user
@@ -66,15 +67,18 @@ func GetUser(c *gin.Context) {
 	c.BindJSON(&a)
 	username := a.User_Name
 	password := a.User_Passwd
+	timeNow := time.Now().Unix()
+	time := time.Unix(timeNow, 0)
+	logintime := time.Format("2006-1-02 15:04:05")
 	valid := validation.Validation{}
-	a = user{User_Name: username, User_Passwd: password}
+	a = user{User_Name: username, User_Passwd: password, Login_time: logintime}
 	ok, _ := valid.Valid(&a)
 
 	data := make(map[string]interface{})
 	code := error.INVALID_PARAMS
 
 	if ok {
-		isExist := models.CheckUser(username, password)
+		isExist := models.CheckUser(username, password, logintime)
 		if isExist {
 			token, err := util.GenerateToken(username, password)
 			if err != nil {

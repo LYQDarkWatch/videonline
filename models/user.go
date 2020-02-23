@@ -13,12 +13,14 @@ type User struct {
 	Priority     int    `json:"priority"`
 	User_Phone   int    `json:"user_phone"`
 	User_Email   string `json:"user_email"`
+	Last_Login   string `json:"last_login"`
 }
 
 var user User
 
-func CheckUser(username, password string) bool {
+func CheckUser(username, password, time string) bool {
 	db.Select("user_id").Where(User{User_Name: username, User_Passwd: password}).First(&user)
+	db.Model(&user).Update("last_login", time)
 	if user.User_ID > 0 {
 		return true
 	}

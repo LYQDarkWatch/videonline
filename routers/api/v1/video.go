@@ -27,30 +27,15 @@ func GetVideoByID(c *gin.Context) {
 
 	id := c.Query("vid")
 	println(id)
-	//valid := validation.Validation{}
-	//valid.Min(id, 1, "vid").Message("ID必须大于0")
-
 	code := error.INVALID_PARAMS
 	var data interface{}
-	//if ! valid.HasErrors() {
-	//	if models.ExistVideoByID(id) == true{
-	//		data = models.GetVideoByID(id)
-	//		code = error.SUCCESS
-	//	} else {
-	//		code = error.ERROR_NOT_EXIST_ARTICLE
-	//	}
+	//if models.ExistVideoByID(id) == true {
+	models.VideoPlaySum(id)
+	data = models.GetVideoByID(id)
+	code = error.SUCCESS
 	//} else {
-	//	for _, err := range valid.Errors {
-	//		fmt.Println(err.Key, err.Message)
-	//	}
+	//	code = error.ERROR_NOT_EXIST_ARTICLE
 	//}
-	if models.ExistVideoByID(id) == true {
-		models.VideoPlaySum(id)
-		data = models.GetVideoByID(id)
-		code = error.SUCCESS
-	} else {
-		code = error.ERROR_NOT_EXIST_ARTICLE
-	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),

@@ -44,3 +44,19 @@ func GetUserFavorite(c *gin.Context) {
 		"data": data,
 	})
 }
+
+//删除收藏的视频
+func DeleteFavoriteByID(c *gin.Context) {
+	uid := c.Query("user_id")
+	vid := c.Query("video_id")
+	u_id, _ := strconv.Atoi(uid)
+	v_id, _ := strconv.Atoi(vid)
+	code := error.INVALID_PARAMS
+	if models.DeleteFavoriteByID(u_id, v_id) == true {
+		code = error.SUCCESS
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}
