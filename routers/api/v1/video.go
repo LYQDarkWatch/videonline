@@ -1,22 +1,13 @@
 package v1
 
 import (
-	//"github.com/astaxie/beego/validation"
-	//"fmt"
-	//"github.com/Unknwon/com"
 	"github.com/gin-gonic/gin"
-	"strconv"
-
-	//"github.com/juju/ratelimit"
-
-	//"github.com/juju/ratelimit"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	//"time"
-
-	//"videOnline/middleware/bucketoken"
+	"strconv"
+	"time"
 	"videOnline/models"
 	"videOnline/pkg/error"
 	"videOnline/pkg/setting"
@@ -80,13 +71,9 @@ func GetAllFreePriview(c *gin.Context) {
 
 //获取所有VIP视频
 func GetAllVipPriview(c *gin.Context) {
-	//maps := make(map[string]interface{})
 	data := make(map[string]interface{})
-
 	code := error.SUCCESS
 	data["lists"] = models.GetAllVipPreview()
-	//data["total"] = models.GetTagTotal(maps)
-
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),
@@ -94,9 +81,45 @@ func GetAllVipPriview(c *gin.Context) {
 	})
 }
 
+type videos struct {
+	Video_Name    string `json:"video_name"`
+	Video_Content string `json:"video_content"`
+	Video_Info    string `json:"video_info"`
+	Tag_Name      string `json:"tag_name"`
+	Video_Actor   string `json:"video_actor"`
+	Video_Url     string `json:"video_url"`
+	Video_Imgurl  string `json:"video_imgurl"`
+}
+
 //新增视频
 func AddVideo(c *gin.Context) {
 
+	var video videos
+	c.BindJSON(&video)
+
+	name := video.Video_Name
+	content := video.Video_Content
+	info := video.Video_Info
+	tag_name := video.Tag_Name
+	actor := video.Video_Actor
+	video_img := video.Video_Imgurl
+	video_playurl := video.Video_Url
+	println("play:", video_playurl)
+	tag_id := models.FindTagBYID(tag_name)
+	println("tag_id: ", tag_id)
+	timeNow := time.Now().Unix()
+	time := time.Unix(timeNow, 0)
+	createdtime := time.Format("2006-1-02 15:04:05")
+
+	models.AddVideo(name, info, video_playurl, actor, createdtime, tag_id)
+	models.AddPreview(name, content, video_img, tag_id)
+	var code int
+	code = error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": make(map[string]string),
+	})
 }
 
 //修改视频信息
@@ -104,9 +127,17 @@ func EditVideo(c *gin.Context) {
 
 }
 
-//删除视频
-func DeleteVideo(c *gin.Context) {
-
+//管理员删除视频
+func AdminDeleteVideo(c *gin.Context) {
+	var code int
+	id := c.Query("video_id")
+	video_id, _ := strconv.Atoi(id)
+	models.AdminDeleteVideo(video_id)
+	code = error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
 }
 
 const (
@@ -131,14 +162,6 @@ func SearchVideo(c *gin.Context) {
 
 //播放视频
 func StreamHandler(c *gin.Context) {
-	//bucket := bucketoken.NewConnLimiter(2)
-	//if bucket.GetToken(1) == false{
-	//	c.JSON(http.StatusOK, gin.H{
-	//		"code": 500,
-	//		"msg":  "超出播放限制",
-	//	})
-	//}
-
 	available := setting.TokenBucket.TakeAvailable(1)
 	if available <= 0 {
 		c.JSON(http.StatusOK, gin.H{
@@ -157,42 +180,33 @@ func StreamHandler(c *gin.Context) {
 			return
 		}
 		videos, _ := ioutil.ReadAll(video)
-		//c.Header("Content-Type","video/mp4")
 		c.Data(200, "video/mp4", videos)
-		//bucket.ReleaseToken()
 		defer video.Close()
 	}
-
 }
 
-//func StreamHandler(w http.ResponseWriter,r *http.Request,p httprouter.Params){
-//	vid := p.ByName("video-id")
-//	vl := VIDEO_DIR + vid
-//	video, err := os.Open(vl)
-//	if err != nil{
-//		print("error")
-//		return
-//	}
-//	w.Header().Set("Content-Type","video/mp4")
-//	http.ServeContent(w,r,"",time.Now(), video)
-//	defer video.Close()
-//}
-func UploadHandler(c *gin.Context) {
-
+//免费视频变VIP视频
+func FreeVideoBeVip(c *gin.Context) {
+	id := c.Query("video_id")
+	video_id, _ := strconv.Atoi(id)
+	var code int
+	models.FreeVideoBeVIP(video_id)
+	code = error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
 }
 
-//func IScunzai(c *gin.Context) {
-//	id := c.Query("vid")
-//	println(id)
-//	if models.ExistVideoByID(id) == true {
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": "200",
-//			"msg":  "此视频存在",
-//		})
-//	} else {
-//		c.JSON(http.StatusOK, gin.H{
-//			"code": "400",
-//			"msg":  "此视频不存在",
-//		})
-//	}
-//}
+//VIP视频变免费视频
+func VipVideoBeFree(c *gin.Context) {
+	id := c.Query("video_id")
+	video_id, _ := strconv.Atoi(id)
+	var code int
+	models.VIPVideoBeFree(video_id)
+	code = error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}

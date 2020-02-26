@@ -7,10 +7,10 @@ type Preview struct {
 	//Tag           Tag    `json:"video_tag" gorm:"ForeignKey:Tag_Id"`
 	Tag           Tag    `gorm:"foreignkey:TagID"`
 	Video_Content string `json:"video_content"`
-	Video_ImgUrl  string `json:"video_img_url"`
+	Video_Imgurl  string `json:"video_imgurl"`
 	Play_Sum      int    `json:"play_sum"`
 	Star_Sum      int    `json:"star_sum"`
-	Video_IsVip   int    `json:"video_is_vip"`
+	Video_Isvip   int    `json:"video_isvip"`
 }
 
 //var  priview Preview
@@ -29,12 +29,7 @@ func GetAllVipPreview() (vipVideo []Preview) {
 
 //按分类检索视频
 func GetVideoByTag(id int) (previewbytag []Preview) {
-	//db.Model(&previewbytag).AddForeignKey("tag_id","tag(tag_id)","RESTRICT","RESTRICT")
-	//db.Where("tag_id = ?", id).Preload("Tag").Find(&previewbytag)
 	db.Preload("Tag").Where("tag_id = ?", id).Find(&previewbytag)
-
-	//db.Model(&previewbytag).Preload("Priview_Tag").Where("tag_id=?",id).Find(&previewbytag)
-	//db.Preload("Priview_Tag",id).Find(&previewbytag).Where("tag_id=?",id)
 	return previewbytag
 }
 
@@ -44,7 +39,26 @@ func SearchVideoByName(name string) (search []Preview) {
 	return
 }
 
-func GetTagInPreview() (previewbytag []Preview) {
-	db.Preload("Tag").Find(&previewbytag)
-	return
+//新增视频预览
+func AddPreview(video_name, video_content, video_img string, tag_id int) bool {
+	db.Create(&Preview{
+		Video_Name:    video_name,
+		TagID:         tag_id,
+		Video_Content: video_content,
+		Video_Imgurl:  video_img,
+		Play_Sum:      0,
+		Star_Sum:      0,
+		Video_Isvip:   0,
+	})
+	return true
+}
+
+//免费电影变VIP电影
+func FreeVideoBeVIP(video_id int) {
+	db.Where("video_id = ?", video_id).Model(&Preview{}).UpdateColumn("video_isvip", 1).First(&preview)
+}
+
+//VIP视频变为免费视频
+func VIPVideoBeFree(video_id int) {
+	db.Where("video_id = ?", video_id).Model(&Preview{}).UpdateColumn("video_isvip", 0).First(&preview)
 }

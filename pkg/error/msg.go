@@ -21,6 +21,10 @@ var MsgFlags = map[int]string{
 	ERROR_ADD_CONTENT_SUCCESS:       "添加评论成功",
 	ERROR_ADD_CONTENT_ERROR:         "添加评论失败",
 	ERROR_DELETE_CONTENT_NOT_MYSELF: "删除失败，不是本人的评论",
+	ERROR_USER_NOT_EXIST:            "该用户不存在",
+	ERROR_USER_NOT_ADMIN:            "您不是管理员，无权进行此操作",
+	ERROR_FAVORITE_EXIST:            "该视频已存在您的收藏中",
+	ERROR_USER_LOGIN:                "用户名或密码错误",
 }
 
 func GetMsg(code int) string {

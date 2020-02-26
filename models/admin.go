@@ -1,67 +1,29 @@
 package models
 
-//type Admin struct {
-//	Admin_ID      int    `gorm:"primary_key" json:"id"`
-//	Admin_Name    string `json:"admin_name"`
-//	Admin_Passwd  string `json:"admin_passwd"`
-//	Admin_Display string `json:"admin_display"`
-//	Created_Time  string `json:"create_time"`
-//	Priority      int    `json:"priority"`
-//}
-//
-//var admin Admin
-//
-//func CheckAdmin(username, password string) bool {
-//	db.Select("admin_id").Where(Admin{Admin_Name: username, Admin_Passwd: password}).First(&admin)
-//	if admin.Admin_ID > 0 {
-//		return true
-//	}
-//	return false
-//}
-//
-//func CreateAdmin(username, password, displayname, createdtime string) bool {
-//	if ExistAdminByName(username) == false {
-//		db.Create(&Admin{
-//			Admin_Name:    username,
-//			Admin_Passwd:  password,
-//			Admin_Display: displayname,
-//			Created_Time:  createdtime,
-//		})
-//		return true
-//	}
-//	return false
-//}
-//
-//func EditAdminInfo(display string, id string, data interface{}) bool {
-//	if ExistAdminByDisplay(display) == false {
-//		db.Model(&Admin{}).Where("admin_id= ?", id).Update(data)
-//		return true
-//	}
-//	return false
-//}
-//func ExistAdminByDisplay(displayname string) bool {
-//	if result := db.Select("admin_display").Where("admin_display=?", displayname).First(&admin).Error; result != nil {
-//		return false
-//	}
-//	return true
-//}
-//func ExistAdminByID(id string) bool {
-//	if result := db.Select("admin_id").Where("admin_id=?", id).First(&admin).Error; result != nil {
-//		return false
-//	}
-//	return true
-//}
-//
-//func ExistAdminByName(username string) bool {
-//	if result := db.Select("admin_name").Where("admin_name = ?", username).First(&admin).Error; result != nil {
-//		return false
-//	}
-//	return true
-//}
-//
-//func BecomeVip(username string) bool {
-//	if result := db.Where("admin_name = ?", username).Model(&Admin{}).UpdateColumn("priority", 1).First(&admin).Error; result != nil {
-//		return false
-//	}
-//	return true
-//}
+type Admin struct {
+	Admin_ID     int    `gorm:"primary_key"`
+	Admin_Name   string `json:"admin_name"`
+	Admin_Passwd string `json:"admin_passwd"`
+	Priority     int    `json:"priority"`
+}
+
+var admin Admin
+
+func BanUsercomment(user_id int, user_name string) {
+	db.Where("user_name = ? and user_name = ?", user_id, user_name).Model(&User{}).UpdateColumn("can_comment", 1).First(&user)
+}
+
+//管理员登录
+func CheckAdmin(admin_name, admin_pass string) bool {
+	db.Select("admin_id").Where(Admin{Admin_Name: admin_name, Admin_Passwd: admin_pass}).First(&admin)
+	if admin.Admin_ID > 0 {
+		return true
+	}
+	return false
+}
+
+//获取管理员详情
+func GetAdminInfo(admin_name string) (admin Admin) {
+	db.Where("admin_name = ?", admin_name).First(&admin)
+	return
+}

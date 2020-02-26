@@ -21,8 +21,13 @@ func AddFavorite(c *gin.Context) {
 	time := time.Unix(timeNow, 0)
 	add_time := time.Format("2006-1-02 15:04:05")
 	code := error.INVALID_PARAMS
-	if models.AddFavorite(u_id, v_id, video_name, add_time) == true {
-		code = error.SUCCESS
+	if models.ExistFavorite(u_id, v_id) == false {
+		if models.AddFavorite(u_id, v_id, video_name, add_time) == true {
+			models.AddVideoStarSum(video_id)
+			code = error.SUCCESS
+		}
+	} else {
+		code = error.ERROR_FAVORITE_EXIST
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,

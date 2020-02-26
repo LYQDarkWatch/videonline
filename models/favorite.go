@@ -22,6 +22,14 @@ func AddFavorite(user_id, video_id int, video_name, favorite_time string) bool {
 	return true
 }
 
+//检查是否已经存在该收藏
+func ExistFavorite(user_id, video_id int) bool {
+	if result := db.Select("favorite_id").Where("user_id = ? and video_id = ?", user_id, video_id).First(&favorite).Error; result != nil {
+		return false
+	}
+	return true
+}
+
 //获取收藏夹视频
 func GetUserFavorite(id int) (allfavorite []Favorite) {
 	db.Where("user_id=?", id).Preload("Preview").Preload("Preview.Tag").Find(&allfavorite)

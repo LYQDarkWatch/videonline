@@ -64,3 +64,16 @@ func DeleteContent(c *gin.Context) {
 		"msg":  error.GetMsg(code),
 	})
 }
+
+//给评论点赞
+func StarContent(c *gin.Context) {
+	id := c.Query("content_id")
+	content_id, _ := strconv.Atoi(id)
+	println(content_id)
+	models.StarContent(content_id)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}

@@ -42,17 +42,15 @@ func GetVideoByID(id string) (video Info) {
 
 //访问视频增加访问总数
 func VideoPlaySum(id string) bool {
-	//db.Select("video_id").Where("video_id = ?", id).First(&video).Exec("UPDATE video_info SET play_sum = play_sum + 1")
-	//db.Select("video_id").Where("video_id = ?", id).First(&preview).Exec("UPDATE video_preview SET play_sum = play_sum + 1")
 	db.Model(&video).Where("video_id = ?", id).Update("play_sum", gorm.Expr("play_sum + 1"))
 	db.Model(&preview).Where("video_id = ?", id).Update("play_sum", gorm.Expr("play_sum + 1"))
 	return true
 }
 
 //收藏数增加
-func VideoStarSum(id string) bool {
-	db.Select("video_id").Where("video_id = ?", id).First(&video).Exec("UPDATE video_info SET star_sum = star_sum + 1")
-	db.Select("video_id").Where("video_id = ?", id).First(&preview).Exec("UPDATE video_preview SET star_sum = star_sum + 1")
+func AddVideoStarSum(id string) bool {
+	db.Model(&video).Where("video_id = ?", id).Update("star_sum", gorm.Expr("star_sum + 1"))
+	db.Model(&preview).Where("video_id = ?", id).Update("star_sum", gorm.Expr("star_sum + 1"))
 	return true
 }
 
@@ -69,6 +67,40 @@ func ExistVideoByName(name string) bool {
 	if result := db.Select("video_name").Where("video_name=?", name).First(&video).Error; result != nil {
 		return false
 	}
+	return true
+}
+
+//新建视频
+func AddVideo(video_name, video_info, video_url, actor, created_time string, tag_id int) bool {
+	println("video_url:", video_url)
+	db.Create(&Info{
+		Video_Name:   video_name,
+		Video_Info:   video_info,
+		Tag_ID:       tag_id,
+		Video_Url:    video_url,
+		Video_Actor:  actor,
+		Video_Logo:   "0",
+		First_Upload: created_time,
+		Last_Update:  "0",
+		Play_Sum:     0,
+		Star_Sum:     0,
+		Content_Sum:  0,
+		Content:      nil,
+	})
+	return true
+}
+
+//管理员查看所有视频
+func AdminGetAllVideo() (video []Info, preview []Preview) {
+	db.Model(&video).Preload("Video_Tag").Preload("Content").Find(&video)
+	db.Model(&preview).Find(&preview)
+	return
+}
+
+//管理员删除视频
+func AdminDeleteVideo(video_id int) bool {
+	db.Where("video_id = ?", video_id).Delete(&Info{})
+	db.Where("video_id = ?", video_id).Delete(&Preview{})
 	return true
 }
 

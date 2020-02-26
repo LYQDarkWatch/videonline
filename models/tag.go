@@ -1,17 +1,6 @@
 package models
 
 type Tag struct {
-	//Model
-
-	//Name string `json:"name"`
-	//CreatedBy string `json:"created_by"`
-	//ModifiedBy string `json:"modified_by"`
-	//State int `json:"state"`
-
-	//
-	//TagId        int    `json:"tag_id"`
-	//Tag_Name     string `json:"tag_name"`
-	//Created_Time string `json:"created_time"`
 	Tag_Id       int
 	Tag_Name     string
 	Created_Time string
@@ -24,16 +13,12 @@ func GetTags() (tags []Tag) {
 	return
 }
 
-//func GetTags(pageNum int, pageSize int, maps interface{})(tags []Tag)  {
-//	db.Where(maps).Offset(pageNum).Limit(pageSize).Find(&tags)
-//	return
-//}
-//
 //func GetTagTotal(maps interface{}) (count int) {
 //	db.Model(&Tag{}).Where(maps).Count(&count)
 //	return
 //}
 
+//添加标签
 func AddTag(name string, Created_time string) bool {
 	db.Create(&Tag{
 		Tag_Name:     name,
@@ -42,14 +27,22 @@ func AddTag(name string, Created_time string) bool {
 	return true
 }
 
-func ExistTagByName(name string) bool {
+//根据id查找标签
+func FindTagBYID(tag_name string) int {
+	db.Model(&tag).Where("tag_name = ?", tag_name).First(&tag)
+	id := tag.Tag_Id
+	return id
+}
 
+//验证标签名称是否已经存在
+func ExistTagByName(name string) bool {
 	if result := db.Select("tag_id").Where("tag_name = ?", name).First(&tag).Error; result != nil {
 		return false
 	}
 	return true
 }
 
+//验证次id标签是否存在
 func ExistTagByID(id string) bool {
 	var tag Tag
 	if result := db.Select("tag_id").Where("tag_id=?", id).First(&tag).Error; result != nil {
@@ -58,6 +51,7 @@ func ExistTagByID(id string) bool {
 	return true
 }
 
+//删除标签
 func DeleteTag(id string) bool {
 	db.Where("tag_id = ?", id).Delete(&Tag{})
 	return true

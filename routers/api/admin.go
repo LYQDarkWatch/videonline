@@ -1,124 +1,168 @@
 package api
 
-//
-//import (
-//	"github.com/astaxie/beego/validation"
-//	"github.com/gin-gonic/gin"
-//	"log"
-//	"net/http"
-//	"time"
-//	"videOnline/models"
-//	"videOnline/pkg/error"
-//	"videOnline/pkg/util"
-//)
-//
-//type admin struct {
-//	Admin_ID          string
-//	Admin_Name        string `valid:"Required; MaxSize(50)"`
-//	Admin_Passwd      string `valid:"Required; MaxSize(50)"`
-//	Admin_display     string
-//	Admin_CreatedTime string
-//	Priority          int
-//}
-//
-//var a admin
-//
-////注册新用户
-//func CreateAdmin(c *gin.Context) {
-//	c.BindJSON(&a)
-//	username := a.Admin_Name
-//	password := a.Admin_Passwd
-//	displayname := a.Admin_display
-//	timeNow := time.Now().Unix()
-//	time := time.Unix(timeNow, 0)
-//	createdtime := time.Format("2006-1-02 15:04:05")
-//	//valid := validation.Validation{}
-//	a = admin{Admin_Name: username, Admin_Passwd: password, Admin_CreatedTime: createdtime}
-//	//ok,_ := valid.Valid(&a)
-//	data := make(map[string]interface{})
-//	code := error.INVALID_PARAMS
-//	//if ok {
-//	isCreate := models.CreateAdmin(username, password, displayname, createdtime)
-//	if isCreate == true {
-//		data["token"] = "created success"
-//		code = error.SUCCESS
-//	}
-//	//}else {
-//	//	for _,err := range valid.Errors{
-//	//		log.Println(err.Key,err.Message)
-//	//	}
-//	//}
-//
-//	c.JSON(http.StatusOK, gin.H{
-//		"code": code,
-//		"msg":  error.GetMsg(code),
-//		"data": data,
-//	})
-//}
-//
-////用户登录
-//func GetAdmin(c *gin.Context) {
-//	c.BindJSON(&a)
-//	username := a.Admin_Name
-//	password := a.Admin_Passwd
-//	valid := validation.Validation{}
-//	a = admin{Admin_Name: username, Admin_Passwd: password}
-//	ok, _ := valid.Valid(&a)
-//
-//	data := make(map[string]interface{})
-//	code := error.INVALID_PARAMS
-//
-//	if ok {
-//		isExist := models.CheckAdmin(username, password)
-//		if isExist {
-//			token, err := util.GenerateToken(username, password)
-//			if err != nil {
-//				code = error.ERROR_AUTH_TOKEN
-//			} else {
-//				data["token"] = token
-//				code = error.SUCCESS
-//			}
-//		} else {
-//			code = error.ERROR_AUTH
-//		}
-//	} else {
-//		for _, err := range valid.Errors {
-//			log.Println(err.Key, err.Message)
-//		}
-//	}
-//
-//	c.JSON(http.StatusOK, gin.H{
-//		"code": code,
-//		"msg":  error.GetMsg(code),
-//		"data": data,
-//	})
-//}
-//
-////修改用户资料
-//func EditAdminInfo(c *gin.Context) {
-//	c.BindJSON(&a)
-//	id := a.Admin_ID
-//	password := a.Admin_Passwd
-//	displayname := a.Admin_display
-//	data := make(map[string]interface{})
-//	data["admin_display"] = displayname
-//	data["admin_passwd"] = password
-//	code := error.INVALID_PARAMS
-//	if models.ExistAdminByID(id) == true {
-//		if models.EditAdminInfo(displayname, id, data) == true {
-//			code = error.SUCCESS
-//		} else {
-//			code = error.ERROR_NOT_SAME_ADMIN
-//		}
-//	} else {
-//		code = error.ERROR_ADMIN_NOT_EXIST
-//	}
-//
-//	c.JSON(http.StatusOK, gin.H{
-//		"code": code,
-//		"msg":  error.GetMsg(code),
-//	})
-//}
+import (
+	"github.com/astaxie/beego/validation"
+	"github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+	"strconv"
+	"time"
+	"videOnline/models"
+	"videOnline/pkg/error"
+	"videOnline/pkg/util"
+)
+
+type admin struct {
+	Admin_ID          string
+	Admin_Name        string `valid:"Required; MaxSize(50)"`
+	Admin_Passwd      string `valid:"Required; MaxSize(50)"`
+	Admin_display     string
+	Admin_CreatedTime string
+	Priority          int
+}
+
+type notification struct {
+	Admin_name string `json:"admin_name"`
+	User_name  string `json:"user_name"`
+	User_id    string `json:"user_id"`
+}
+
+var b admin
+var notifi notification
+
+//管理员登录
+func GetAdmin(c *gin.Context) {
+	c.BindJSON(&b)
+	username := b.Admin_Name
+	password := b.Admin_Passwd
+	valid := validation.Validation{}
+	b = admin{Admin_Name: username, Admin_Passwd: password}
+	ok, _ := valid.Valid(&b)
+
+	data := make(map[string]interface{})
+	code := error.INVALID_PARAMS
+
+	if ok {
+		isExist := models.CheckAdmin(username, password)
+		if isExist {
+			token, err := util.GenerateToken(username, password)
+			if err != nil {
+				code = error.ERROR_AUTH_TOKEN
+			} else {
+				data["user"] = models.GetAdminInfo(username)
+				data["token"] = token
+				code = error.SUCCESS
+			}
+		} else {
+			code = error.ERROR_USER_LOGIN
+		}
+	} else {
+		for _, err := range valid.Errors {
+			log.Println(err.Key, err.Message)
+		}
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//管理员获取所有用户
+func AdminGetAllUser(c *gin.Context) {
+	data := make(map[string]interface{})
+	data["user"] = models.GetAllUser()
+	var code int
+	code = error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//禁止用户评论
+func DisableUserComments(c *gin.Context) {
+	c.BindJSON(&notifi)
+	admin_name := notifi.Admin_name
+	id := notifi.User_id
+	user_id, _ := strconv.Atoi(id)
+	user_name := notifi.User_name
+	content := "您的账号因发表违禁言论已经被限制评论，七天后解封"
+	timeNow := time.Now().Unix()
+	time := time.Unix(timeNow, 0)
+	sendtime := time.Format("2006-1-02 15:04:05")
+	var code int
+	println(user_id)
+	if models.DisableUserComments(admin_name, user_name, content, sendtime, user_id) == true {
+		code = error.SUCCESS
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}
+
+//恢复用户评论功能
+func AbleUserComments(c *gin.Context) {
+	c.BindJSON(&notifi)
+	id := notifi.User_id
+	admin_name := notifi.Admin_name
+	user_id, _ := strconv.Atoi(id)
+	user_name := notifi.User_name
+	content := "您的账号已被解封"
+	timeNow := time.Now().Unix()
+	time := time.Unix(timeNow, 0)
+	sendtime := time.Format("2006-1-02 15:04:05")
+	var code int
+	println(user_id)
+
+	if models.AbleUserComments(admin_name, user_name, content, sendtime, user_id) == true {
+		code = error.SUCCESS
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}
+
+//管理员获取所有视频信息
+func AdminGetAllVideoInfo(c *gin.Context) {
+	data := make(map[string]interface{})
+	data["videos"], data["previews"] = models.AdminGetAllVideo()
+	var code int
+	code = error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//管理员查看现有标签
+func AdminGetAllTag(c *gin.Context) {
+	var code int
+	data := make(map[string]interface{})
+	data["tags"] = models.GetTags()
+	code = error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//管理员删除视频
+func AdminDeleteVideo(c *gin.Context) {
+	var code int
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}
+
 //
 ////升级成为会员
 //func BecomeVip(c *gin.Context) {

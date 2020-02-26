@@ -8,7 +8,7 @@ type Content struct {
 	User_ID       int    `json:"user_id"`
 	User_Name     string `json:"user_name"`
 	User_Logo     string `json:"user_logo"`
-	Star_Num      int    `json:"star_num"`
+	Star_Sum      int    `json:"star_sum"`
 	Video_Content string `json:"video_content"`
 	Add_Time      string `json:"add_time"`
 }
@@ -25,7 +25,7 @@ func AddContent(vid, uid int, uname, ulogo, vcontent, addtime string) bool {
 		User_ID:       uid,
 		User_Name:     uname,
 		User_Logo:     ulogo,
-		Star_Num:      0,
+		Star_Sum:      0,
 		Video_Content: vcontent,
 		Add_Time:      addtime,
 	})
@@ -39,5 +39,13 @@ func DeleteContent(content_id, user_id int) bool {
 	}
 	db.Model(&info).Where("video_id = ?", content.Video_ID).Update("content_sum", gorm.Expr("content_sum - 1"))
 	db.Model(&content).Where("content_id = ? and user_id = ?", content_id, user_id).Delete(&content)
+	return true
+}
+
+//给评论点赞
+func StarContent(content_id int) bool {
+	println(content_id)
+	db.Model(&content).Where("content_id = ?", content_id).UpdateColumn("star_sum", gorm.Expr("star_sum + ?", 1))
+
 	return true
 }

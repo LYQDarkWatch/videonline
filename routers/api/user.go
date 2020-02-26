@@ -84,11 +84,12 @@ func GetUser(c *gin.Context) {
 			if err != nil {
 				code = error.ERROR_AUTH_TOKEN
 			} else {
+				data["user"] = models.GetUserInfo(username)
 				data["token"] = token
 				code = error.SUCCESS
 			}
 		} else {
-			code = error.ERROR_AUTH
+			code = error.ERROR_USER_NOT_EXIST
 		}
 	} else {
 		for _, err := range valid.Errors {
