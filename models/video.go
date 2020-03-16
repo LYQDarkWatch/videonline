@@ -17,26 +17,22 @@ type Info struct {
 	Star_Sum     int       `json:"star_sum"`
 	Content_Sum  int       `json:"content_sum"`
 	Content      []Content `gorm:"foreignkey:video_id"`
+	Video_Isvip  int       `json:"video_isvip"`
 }
 
-//func (article *Article) BeforeCreate(scope gorm.Scope) error {
-//	scope.SetColumn("CreateOn",time.Now().Unix())
-//
-//	return nil
-//}
-//
-//func (article *Article) BeforeUpdate(scope gorm.Scope) error {
-//	scope.SetColumn("ModifiedOn",time.Now().Unix())
-//
-//	return nil
-//}
-//
 var video Info
 var preview Preview
 
 //获取单个视频详情
 func GetVideoByID(id string) (video Info) {
 	db.Where("video_id = ?", id).Preload("Video_Tag").Preload("Content").First(&video)
+	return
+}
+
+//管理员查看所有视频
+func AdminGetAllVideo() (video []Info, preview []Preview) {
+	//db.Model(&video).Preload("Video_Tag").Preload("Content").Find(&video)
+	db.Model(&preview).Preload("Tag").Preload("Info").Preload("Info.Video_Tag").Preload("Info.Content").Find(&preview)
 	return
 }
 
@@ -90,18 +86,19 @@ func AddVideo(video_name, video_info, video_url, actor, created_time string, tag
 	return true
 }
 
-//管理员查看所有视频
-func AdminGetAllVideo() (video []Info, preview []Preview) {
-	db.Model(&video).Preload("Video_Tag").Preload("Content").Find(&video)
-	db.Model(&preview).Find(&preview)
-	return
-}
-
 //管理员删除视频
 func AdminDeleteVideo(video_id int) bool {
-	db.Where("video_id = ?", video_id).Delete(&Info{})
-	db.Where("video_id = ?", video_id).Delete(&Preview{})
-	return true
+	error := db.Where("video_id = ?", video_id).Delete(&Info{}).Error
+	if error != nil {
+		return false
+	} else {
+		error1 := db.Where("video_id = ?", video_id).Delete(&Preview{}).Error
+		if error1 != nil {
+			return false
+		} else {
+			return true
+		}
+	}
 }
 
 //func GetArticleTotal(maps interface{}) (count int) {

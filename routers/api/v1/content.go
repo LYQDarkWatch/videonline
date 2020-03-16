@@ -11,6 +11,7 @@ import (
 
 type contents struct {
 	Video_ID      string
+	Video_Name    string
 	User_ID       string
 	User_Display  string
 	User_Logo     string
@@ -23,17 +24,19 @@ var content contents
 func AddContent(c *gin.Context) {
 	c.BindJSON(&content)
 	video_id := content.Video_ID
+	video_name := content.Video_Name
 	user_id := content.User_ID
 	user_name := content.User_Display
 	user_logo := content.User_Logo
 	video_content := content.Video_Content
+
 	timeNow := time.Now().Unix()
 	time := time.Unix(timeNow, 0)
 	add_time := time.Format("2006-1-02 15:04:05")
 	v_id, _ := strconv.Atoi(video_id)
 	u_id, _ := strconv.Atoi(user_id)
 	code := error.INVALID_PARAMS
-	if models.AddContent(v_id, u_id, user_name, user_logo, video_content, add_time) == true {
+	if models.AddContent(v_id, u_id, user_name, user_logo, video_content, add_time, video_name) == true {
 		code = error.SUCCESS
 	} else {
 		code = error.ERROR_ADD_CONTENT_ERROR

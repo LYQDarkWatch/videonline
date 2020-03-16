@@ -36,3 +36,17 @@ func AbleUserComments(admin_name, user_name, content, send_time string, user_id 
 	})
 	return true
 }
+
+//获取用户的通知
+func UserGetNoti(username string) (notifis []Notification) {
+	println("user:", username)
+	db.Where("user_name = ?", username).Order("notification_id desc").Find(&notifis)
+	return
+}
+
+//删除通知
+func DeleteUserGetNoti(nofi_id int) bool {
+	println("user:", nofi_id)
+	db.Where("notification_id = ?", nofi_id).Delete(Notification{})
+	return true
+}

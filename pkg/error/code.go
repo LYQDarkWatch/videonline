@@ -26,6 +26,8 @@ const (
 	ERROR_USER_NOT_ADMIN            = 410
 	ERROR_FAVORITE_EXIST            = 411
 	ERROR_USER_LOGIN                = 412
+	ERROR_TAG_IS_QUOTE              = 413
+	ERROR_VIDEO_DELETE_ERROE        = 414
 )
 
 const (

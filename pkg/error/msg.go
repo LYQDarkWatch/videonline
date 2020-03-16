@@ -25,6 +25,8 @@ var MsgFlags = map[int]string{
 	ERROR_USER_NOT_ADMIN:            "您不是管理员，无权进行此操作",
 	ERROR_FAVORITE_EXIST:            "该视频已存在您的收藏中",
 	ERROR_USER_LOGIN:                "用户名或密码错误",
+	ERROR_TAG_IS_QUOTE:              "该标签已被现有视频引用，删除失败",
+	ERROR_VIDEO_DELETE_ERROE:        "视频删除失败",
 }
 
 func GetMsg(code int) string {

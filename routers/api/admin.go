@@ -1,9 +1,7 @@
 package api
 
 import (
-	"github.com/astaxie/beego/validation"
 	"github.com/gin-gonic/gin"
-	"log"
 	"net/http"
 	"strconv"
 	"time"
@@ -35,33 +33,22 @@ func GetAdmin(c *gin.Context) {
 	c.BindJSON(&b)
 	username := b.Admin_Name
 	password := b.Admin_Passwd
-	valid := validation.Validation{}
-	b = admin{Admin_Name: username, Admin_Passwd: password}
-	ok, _ := valid.Valid(&b)
-
+	println("username:", username)
+	println("password:", password)
 	data := make(map[string]interface{})
 	code := error.INVALID_PARAMS
-
-	if ok {
-		isExist := models.CheckAdmin(username, password)
-		if isExist {
-			token, err := util.GenerateToken(username, password)
-			if err != nil {
-				code = error.ERROR_AUTH_TOKEN
-			} else {
-				data["user"] = models.GetAdminInfo(username)
-				data["token"] = token
-				code = error.SUCCESS
-			}
+	if models.CheckAdmin(username, password) == true {
+		token, err := util.GenerateToken(username, password)
+		if err != nil {
+			code = error.ERROR_AUTH_TOKEN
 		} else {
-			code = error.ERROR_USER_LOGIN
+			data["user"] = models.GetAdminInfo(username)
+			data["token"] = token
+			code = error.SUCCESS
 		}
 	} else {
-		for _, err := range valid.Errors {
-			log.Println(err.Key, err.Message)
-		}
+		code = error.ERROR_USER_LOGIN
 	}
-
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),
@@ -86,9 +73,12 @@ func AdminGetAllUser(c *gin.Context) {
 func DisableUserComments(c *gin.Context) {
 	c.BindJSON(&notifi)
 	admin_name := notifi.Admin_name
+	println("admin name:", admin_name)
 	id := notifi.User_id
+	println("user_id :", id)
 	user_id, _ := strconv.Atoi(id)
 	user_name := notifi.User_name
+	println("user_name :", user_name)
 	content := "您的账号因发表违禁言论已经被限制评论，七天后解封"
 	timeNow := time.Now().Unix()
 	time := time.Unix(timeNow, 0)
@@ -156,7 +146,13 @@ func AdminGetAllTag(c *gin.Context) {
 //管理员删除视频
 func AdminDeleteVideo(c *gin.Context) {
 	var code int
-
+	vid := c.Query("video_id")
+	video_id, _ := strconv.Atoi(vid)
+	if models.AdminDeleteVideo(video_id) == true {
+		code = error.SUCCESS
+	} else {
+		code = error.ERROR_VIDEO_DELETE_ERROE
+	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),

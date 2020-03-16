@@ -105,6 +105,7 @@ func AddVideo(c *gin.Context) {
 	video_img := video.Video_Imgurl
 	video_playurl := video.Video_Url
 	println("play:", video_playurl)
+	println("tag_name", tag_name)
 	tag_id := models.FindTagBYID(tag_name)
 	println("tag_id: ", tag_id)
 	timeNow := time.Now().Unix()
@@ -208,5 +209,32 @@ func VipVideoBeFree(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),
+	})
+}
+
+//获取当前热门视频
+func GetHotVideo(c *gin.Context) {
+	data := make(map[string]interface{})
+	code := error.SUCCESS
+	data["lists"] = models.GetHotPreview()
+	//data["total"] = models.GetTagTotal(maps)
+
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//获最新视频
+func GetNewVideo(c *gin.Context) {
+	data := make(map[string]interface{})
+	code := error.SUCCESS
+	data["news"] = models.GetNewPreview()
+	//data["total"] = models.GetTagTotal(maps)
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
 	})
 }

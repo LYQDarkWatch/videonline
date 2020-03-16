@@ -5,6 +5,7 @@ import "github.com/jinzhu/gorm"
 type Content struct {
 	Content_ID    int    `gorm:"primary_key" json:"content_id"`
 	Video_ID      int    `json:"video_id"`
+	Video_Name    string `json:"video_name"`
 	User_ID       int    `json:"user_id"`
 	User_Name     string `json:"user_name"`
 	User_Logo     string `json:"user_logo"`
@@ -17,11 +18,12 @@ var content Content
 var info Info
 
 //添加评论
-func AddContent(vid, uid int, uname, ulogo, vcontent, addtime string) bool {
+func AddContent(vid, uid int, uname, ulogo, vcontent, addtime, video_name string) bool {
 	db.Model(&info).Where("video_id = ?", vid).Update("content_sum", gorm.Expr("content_sum + 1"))
 
 	db.Create(&Content{
 		Video_ID:      vid,
+		Video_Name:    video_name,
 		User_ID:       uid,
 		User_Name:     uname,
 		User_Logo:     ulogo,
@@ -48,4 +50,10 @@ func StarContent(content_id int) bool {
 	db.Model(&content).Where("content_id = ?", content_id).UpdateColumn("star_sum", gorm.Expr("star_sum + ?", 1))
 
 	return true
+}
+
+//获取用户自己评论
+func UserGetContent(user_id int) (user_content []Content) {
+	db.Where("user_id = ?", user_id).Find(&user_content)
+	return
 }

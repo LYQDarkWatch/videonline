@@ -53,7 +53,9 @@ func ExistTagByID(id string) bool {
 
 //删除标签
 func DeleteTag(id string) bool {
-	db.Where("tag_id = ?", id).Delete(&Tag{})
+	if result := db.Where("tag_id = ?", id).Delete(&Tag{}).Error; result != nil {
+		return false
+	}
 	return true
 }
 

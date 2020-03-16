@@ -1,12 +1,14 @@
 package models
 
 type Favorite struct {
-	User_ID       int     `json:"user_id"`
-	Video_ID      int     `gorm:"primary_key" json:"video_id"`
+	Favorite_Id int `json:"favorite_id"`
+	User_ID     int `json:"user_id"`
+	//User_Name     string  `json:"user_name"`
+	Video_ID      int     `json:"video_id"`
 	Video_Name    string  `json:"video_name"`
 	Tag_ID        int     `json:"tag_id"`
 	Favorite_Time string  `json:"favorite_time"`
-	Preview       Preview `json:"Preview" gorm:"foreignkey:video_id"`
+	Preview       Preview `gorm:"ForeignKey:Video_ID;AssociationForeignKey:Video_ID"`
 }
 
 var favorite Favorite
@@ -37,8 +39,8 @@ func GetUserFavorite(id int) (allfavorite []Favorite) {
 }
 
 //删除收藏夹视频
-func DeleteFavoriteByID(uid, vid int) bool {
-	result := db.Where("user_id = ?", uid).Where("video_id=?", vid).Delete(&favorite).Error
+func DeleteFavoriteByID(favorite_id int) bool {
+	result := db.Where("favorite_id = ?", favorite_id).Delete(&favorite).Error
 	if result != nil {
 		return false
 	}

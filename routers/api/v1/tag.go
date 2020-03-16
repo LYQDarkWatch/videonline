@@ -12,7 +12,6 @@ import (
 
 //获取多个文章标签
 func GetTags(c *gin.Context) {
-
 	data := make(map[string]interface{})
 	data["lists"] = models.GetTags()
 	code := error.SUCCESS
@@ -96,8 +95,12 @@ func DeleteTag(c *gin.Context) {
 	id := c.Query("tag_id")
 	code := error.INVALID_PARAMS
 	if models.ExistTagByID(id) == true {
-		models.DeleteTag(id)
-		code = error.SUCCESS
+		if models.DeleteTag(id) == true {
+			code = error.SUCCESS
+		} else {
+			code = error.ERROR_TAG_IS_QUOTE
+		}
+
 	} else {
 		code = error.ERROR_NOT_EXIST_TAG
 	}

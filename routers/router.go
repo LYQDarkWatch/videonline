@@ -27,13 +27,28 @@ func InitRouter() *gin.Engine {
 		//修改个人资料
 		apiv1.POST("/user/edituser", api.EditUserInfo)
 
+		//获取userid
+		apiv1.GET("/user/getid", api.GetUserID)
+
+		//获取can_comment
+		apiv1.GET("/user/getcomment", api.GetUserComment)
+
+		//获取自己评论列表
+		apiv1.GET("/user/getusercomment", api.UserGetComment)
+
+		//获取消息通知
+		apiv1.GET("/user/getusernoti", api.GetUserNoti)
+
+		//删除消息通知
+		apiv1.GET("/user/delusernoti", api.DeleteGetUserNoti)
+
 		//升级会员
 		apiv1.POST("/user/bevip", api.BecomeVip)
 
 		//添加到收藏夹
 		apiv1.GET("/favorite/addfavorite", v1.AddFavorite)
 
-		//删除指定视频
+		//删除收藏夹指定视频
 		apiv1.GET("/favorite/deletefavorite", v1.DeleteFavoriteByID)
 
 		//获取所有标签
@@ -45,14 +60,14 @@ func InitRouter() *gin.Engine {
 		//添加视频评论
 		apiv1.POST("/video/addcontent", v1.AddContent)
 
-		////更新指定标签
-		//apiv1.PUT("/tags/:id", v1.EditTag)
+		//获取热门视频
+		apiv1.GET("/video/hotvideo", v1.GetHotVideo)
+
+		//获取最新视频
+		apiv1.GET("/video/newvideo", v1.GetNewVideo)
 
 		//获取视频列表
 		apiv1.GET("videos", v1.GetVideos)
-
-		//更新视频信息
-		//apiv1.PUT("videos/:id",v1.EditTag)
 
 		//删除评论
 		apiv1.GET("/video/deletecontent", v1.DeleteContent)
@@ -75,6 +90,9 @@ func InitRouter() *gin.Engine {
 		//获取单个视频详情
 		apiv1.GET("/video/getvideo", v1.GetVideoByID)
 
+		//用户获取自己的信息
+		apiv1.GET("/user/getuserinfo", api.GetUserInfo)
+
 		//根据分类检索视频
 		apiv1.GET("video/getvideobytag", v1.GetVideosByTag)
 	}
@@ -82,6 +100,9 @@ func InitRouter() *gin.Engine {
 
 	apiv2.Use(jwt.JWT(), verification.Verification())
 	{
+		//管理员删除视频
+		apiv2.DELETE("/videos/deletevideo", api.AdminDeleteVideo)
+
 		//新建标签
 		apiv2.POST("/tags/addtag", v1.AddTag)
 
@@ -97,8 +118,8 @@ func InitRouter() *gin.Engine {
 		//封禁用户评论功能
 		apiv2.POST("/user/banusercomment", api.DisableUserComments)
 
-		//封禁用户评论功能
-		apiv2.GET("/user/restorecomment", api.AbleUserComments)
+		//解禁用户评论功能
+		apiv2.POST("/user/restorecomment", api.AbleUserComments)
 
 		//管理员获取所有视频信息
 		apiv2.GET("/video/getallvideo", api.AdminGetAllVideoInfo)

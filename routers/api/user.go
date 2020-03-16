@@ -104,6 +104,19 @@ func GetUser(c *gin.Context) {
 	})
 }
 
+//获取用户信息
+func GetUserInfo(c *gin.Context) {
+	username := c.Query("user_name")
+	data := make(map[string]interface{})
+	data["user"] = models.GetUserInfo(username)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"info": data,
+	})
+}
+
 //修改用户资料
 func EditUserInfo(c *gin.Context) {
 	c.BindJSON(&a)
@@ -181,4 +194,68 @@ func VerifyPhoneFormat(phone string) bool {
 
 	reg := regexp.MustCompile(regular)
 	return reg.MatchString(phone)
+}
+
+//获取消息提醒
+func GetUserNoti(c *gin.Context) {
+	user_name := c.Query("user_name")
+	data := make(map[string]interface{})
+	data["list"] = models.UserGetNoti(user_name)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//获取用户能否评论
+func GetUserComment(c *gin.Context) {
+	u_id := c.Query("user_id")
+	user_id, _ := strconv.Atoi(u_id)
+	can_comment := models.GetUserComment(user_id)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": can_comment,
+	})
+}
+
+//获取用户自己的评论
+func UserGetComment(c *gin.Context) {
+	u_id := c.Query("user_id")
+	user_id, _ := strconv.Atoi(u_id)
+	data := make(map[string]interface{})
+	data["list"] = models.UserGetContent(user_id)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}
+
+//删除消息
+func DeleteGetUserNoti(c *gin.Context) {
+	noti_id := c.Query("notification_id")
+	notifi_id, _ := strconv.Atoi(noti_id)
+	models.DeleteUserGetNoti(notifi_id)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}
+
+//删除消息
+func GetUserID(c *gin.Context) {
+	username := c.Query("user_name")
+	user_id := models.GetUserIdByName(username)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"id":   user_id,
+	})
 }

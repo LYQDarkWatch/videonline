@@ -1,11 +1,11 @@
 package models
 
 type Preview struct {
-	Video_ID   int    ` json:"video_id"`
-	Video_Name string `json:"video_name"`
-	TagID      int    ` json:"tag_id" gorm:"primary_key"`
-	//Tag           Tag    `json:"video_tag" gorm:"ForeignKey:Tag_Id"`
-	Tag           Tag    `gorm:"foreignkey:TagID"`
+	Video_ID      int    ` json:"video_id" gorm:"primary_key"`
+	Video_Name    string `json:"video_name"`
+	TagID         int    ` json:"tag_id"`
+	Tag           Tag    `gorm:"ForeignKey:Tag_ID;AssociationForeignKey:Tag_ID"`
+	Info          Info   `gorm:"ForeignKey:Video_ID;AssociationForeignKey:Video_ID"`
 	Video_Content string `json:"video_content"`
 	Video_Imgurl  string `json:"video_imgurl"`
 	Play_Sum      int    `json:"play_sum"`
@@ -17,13 +17,25 @@ type Preview struct {
 
 //获取所有免费电影
 func GetAllFreePreview() (freeVideo []Preview) {
-	db.Where("video_isvip = ?", "0").Find(&freeVideo)
+	db.Where("video_isvip = ?", "0").Preload("Tag").Find(&freeVideo)
+	return
+}
+
+//获取所有免费电影
+func GetHotPreview() (hotVideo []Preview) {
+	db.Order("play_sum desc").Limit(8).Find(&hotVideo)
+	return
+}
+
+//获取所有免费电影
+func GetNewPreview() (newVideo []Preview) {
+	db.Order("video_id desc").Limit(8).Find(&newVideo)
 	return
 }
 
 //获取所有收费电影
 func GetAllVipPreview() (vipVideo []Preview) {
-	db.Where("video_isvip = ?", "1").Find(&vipVideo)
+	db.Where("video_isvip = ?", "1").Preload("Tag").Find(&vipVideo)
 	return
 }
 
@@ -35,7 +47,7 @@ func GetVideoByTag(id int) (previewbytag []Preview) {
 
 //搜索视频
 func SearchVideoByName(name string) (search []Preview) {
-	db.Where("video_name like ?", "%"+name+"%").Find(&search)
+	db.Where("video_name like ?", "%"+name+"%").Preload("Tag").Preload("Info").Find(&search)
 	return
 }
 
@@ -56,9 +68,11 @@ func AddPreview(video_name, video_content, video_img string, tag_id int) bool {
 //免费电影变VIP电影
 func FreeVideoBeVIP(video_id int) {
 	db.Where("video_id = ?", video_id).Model(&Preview{}).UpdateColumn("video_isvip", 1).First(&preview)
+	db.Where("video_id = ?", video_id).Model(&Info{}).UpdateColumn("video_isvip", 1).First(&video)
 }
 
 //VIP视频变为免费视频
 func VIPVideoBeFree(video_id int) {
 	db.Where("video_id = ?", video_id).Model(&Preview{}).UpdateColumn("video_isvip", 0).First(&preview)
+	db.Where("video_id = ?", video_id).Model(&Info{}).UpdateColumn("video_isvip", 0).First(&video)
 }

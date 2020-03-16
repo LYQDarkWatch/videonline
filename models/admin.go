@@ -15,11 +15,12 @@ func BanUsercomment(user_id int, user_name string) {
 
 //管理员登录
 func CheckAdmin(admin_name, admin_pass string) bool {
-	db.Select("admin_id").Where(Admin{Admin_Name: admin_name, Admin_Passwd: admin_pass}).First(&admin)
-	if admin.Admin_ID > 0 {
-		return true
+
+	result := db.Where("admin_name = ? AND admin_passwd = ?", admin_name, admin_pass).First(&Admin{}).Error
+	if result != nil {
+		return false
 	}
-	return false
+	return true
 }
 
 //获取管理员详情

@@ -19,14 +19,20 @@ type User struct {
 
 var user User
 
+//获取用户能否评论
+func GetUserComment(user_id int) int {
+	db.Where("user_id = ?", user_id).First(&user)
+	return user.Can_Comment
+}
+
 //登录校验
 func CheckUser(username, password, time string) bool {
-	db.Select("user_id").Where(User{User_Name: username, User_Passwd: password}).First(&user)
-	db.Model(&user).Update("last_login", time)
-	if user.User_ID > 0 {
-		return true
+	result := db.Where("user_name = ? AND user_passwd = ?", username, password).First(&User{}).Error
+	if result != nil {
+		return false
 	}
-	return false
+	db.Model(&user).Update("last_login", time)
+	return true
 }
 
 //注册新用户
@@ -95,4 +101,12 @@ func GetUserInfo(user_name string) (user User) {
 func GetAllUser() (user []User) {
 	db.Model(&user).Find(&user)
 	return
+}
+
+//管理员获取所有用户
+func GetUserIdByName(user_name string) int {
+	userss := User{}
+	db.Select("user_id").Where("user_name=?", user_name).First(&userss)
+	println("id", userss.User_ID)
+	return userss.User_ID
 }
