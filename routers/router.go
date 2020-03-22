@@ -103,8 +103,14 @@ func InitRouter() *gin.Engine {
 		//管理员删除视频
 		apiv2.DELETE("/videos/deletevideo", api.AdminDeleteVideo)
 
+		//管理员获取视频详情
+		apiv2.GET("/videos/getvideobyid", v1.AdminGetVideo)
+
 		//新建标签
 		apiv2.POST("/tags/addtag", v1.AddTag)
+
+		//管理员删除用户评论
+		apiv2.GET("/comment/deletecomment", api.AdminDeleteContent)
 
 		////删除指定标签
 		apiv2.DELETE("/tags/deletetag", v1.DeleteTag)

@@ -44,6 +44,16 @@ func DeleteContent(content_id, user_id int) bool {
 	return true
 }
 
+//管理员删除评论
+func AdminDeleteContent(content_id int) bool {
+	if result := db.Model(&content).Select("video_id").Where("content_id=? ", content_id).First(&content).Error; result != nil {
+		return false
+	}
+	db.Model(&info).Where("video_id = ?", content.Video_ID).Update("content_sum", gorm.Expr("content_sum - 1"))
+	db.Model(&content).Where("content_id = ?", content_id).Delete(&content)
+	return true
+}
+
 //给评论点赞
 func StarContent(content_id int) bool {
 	println(content_id)

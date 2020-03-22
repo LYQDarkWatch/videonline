@@ -21,6 +21,12 @@ func GetAllFreePreview() (freeVideo []Preview) {
 	return
 }
 
+//管理员获取单个视频详情
+func ADminGetVideoByID(id int) (preview Preview) {
+	db.Where("video_id = ?", id).Preload("Tag").Preload("Info.Content").First(&preview)
+	return
+}
+
 //获取所有免费电影
 func GetHotPreview() (hotVideo []Preview) {
 	db.Order("play_sum desc").Limit(8).Find(&hotVideo)

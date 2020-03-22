@@ -238,3 +238,17 @@ func GetNewVideo(c *gin.Context) {
 		"data": data,
 	})
 }
+
+//管理员获取视频信息
+func AdminGetVideo(c *gin.Context) {
+	v_id := c.Query("video_id")
+	video_id, _ := strconv.Atoi(v_id)
+	data := make(map[string]interface{})
+	data["info"] = models.ADminGetVideoByID(video_id)
+	code := error.SUCCESS
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+		"data": data,
+	})
+}

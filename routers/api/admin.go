@@ -106,7 +106,6 @@ func AbleUserComments(c *gin.Context) {
 	time := time.Unix(timeNow, 0)
 	sendtime := time.Format("2006-1-02 15:04:05")
 	var code int
-	println(user_id)
 
 	if models.AbleUserComments(admin_name, user_name, content, sendtime, user_id) == true {
 		code = error.SUCCESS
@@ -152,6 +151,24 @@ func AdminDeleteVideo(c *gin.Context) {
 		code = error.SUCCESS
 	} else {
 		code = error.ERROR_VIDEO_DELETE_ERROE
+	}
+	c.JSON(http.StatusOK, gin.H{
+		"code": code,
+		"msg":  error.GetMsg(code),
+	})
+}
+
+//管理员删除评论
+func AdminDeleteContent(c *gin.Context) {
+	cid := c.Query("content_id")
+	//admin_name :=c.Query("admin_name")
+
+	content_id, _ := strconv.Atoi(cid)
+	code := error.INVALID_PARAMS
+	if models.AdminDeleteContent(content_id) == true {
+		code = error.SUCCESS
+	} else {
+		code = error.ERROR_DELETE_CONTENT_NOT_MYSELF
 	}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,

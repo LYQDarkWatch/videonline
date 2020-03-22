@@ -10,7 +10,6 @@ type Info struct {
 	Video_Tag    Tag       `gorm:"ForeignKey:Tag_ID;AssociationForeignKey:Tag_ID"`
 	Video_Url    string    `json:"video_url"`
 	Video_Actor  string    `json:"video_actor"`
-	Video_Logo   string    `json:"video_logo"`
 	First_Upload string    `json:"first_upload"`
 	Last_Update  string    `json:"last_update"`
 	Play_Sum     int       `json:"play_sum"`
@@ -75,7 +74,6 @@ func AddVideo(video_name, video_info, video_url, actor, created_time string, tag
 		Tag_ID:       tag_id,
 		Video_Url:    video_url,
 		Video_Actor:  actor,
-		Video_Logo:   "0",
 		First_Upload: created_time,
 		Last_Update:  "0",
 		Play_Sum:     0,

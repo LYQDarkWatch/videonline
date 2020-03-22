@@ -37,6 +37,18 @@ func AbleUserComments(admin_name, user_name, content, send_time string, user_id 
 	return true
 }
 
+//发送通知给用户
+func SentNotiToUser(admin_name, user_name, content, send_time string, user_id int) bool {
+	db.Create(&Notification{
+		Admin_name: admin_name,
+		User_id:    user_id,
+		User_name:  user_name,
+		Content:    content,
+		Send_Time:  send_time,
+	})
+	return true
+}
+
 //获取用户的通知
 func UserGetNoti(username string) (notifis []Notification) {
 	println("user:", username)
