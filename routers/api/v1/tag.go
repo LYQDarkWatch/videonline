@@ -4,10 +4,11 @@ import (
 	"time"
 
 	//"github.com/Unknwon/com"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"videOnline/models"
 	"videOnline/pkg/error"
+
+	"github.com/gin-gonic/gin"
 )
 
 //获取多个文章标签
@@ -45,51 +46,6 @@ func AddTag(c *gin.Context) {
 	})
 }
 
-////修改文章标签
-//func EditTag(c *gin.Context) {
-//	id := com.StrTo(c.Param("id")).MustInt()
-//	name := c.Query("name")
-//	modifiedBy := c.Query("modified_by")
-//
-//	valid := validation.Validation{}
-//
-//	var state int = -1
-//	if arg := c.Query("state"); arg != ""{
-//		state = com.StrTo(arg).MustInt()
-//		valid.Range(state,0,1,"state").Message("状态只允许0或1")
-//	}
-//	valid.Required(id, "id").Message("ID不能为空")
-//	valid.Required(modifiedBy, "modified_by").Message("修改人不能为空")
-//	valid.MaxSize(modifiedBy, 100, "modified_by").Message("修改人最长为100字符")
-//	valid.MaxSize(name, 100, "name").Message("名称最长为100字符")
-//
-//	code := error.INVALID_PARAMS
-//
-//	if ! valid.HasErrors(){
-//		code = error.SUCCESS
-//		if models.ExistTagByID(id){
-//			data := make(map[string]interface{})
-//			data["modified_by"] = modifiedBy
-//			if name != ""{
-//				data["name"] = name
-//			}
-//			if state != -1 {
-//				data["state"] = state
-//			}
-//			models.EditTag(id,data)
-//		} else {
-//			for _, err := range valid.Errors{
-//				log.Println(err.Key,err.Message)
-//			}
-//		}
-//		c.JSON(http.StatusOK,gin.H{
-//			"code":code,
-//			"msg":error.GetMsg(code),
-//			"data":make(map[string]string),
-//		})
-//	}
-//}
-//
 //删除文章标签
 func DeleteTag(c *gin.Context) {
 	id := c.Query("tag_id")

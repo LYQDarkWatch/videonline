@@ -29,7 +29,6 @@ func AddContent(c *gin.Context) {
 	user_name := content.User_Display
 	user_logo := content.User_Logo
 	video_content := content.Video_Content
-
 	timeNow := time.Now().Unix()
 	time := time.Unix(timeNow, 0)
 	add_time := time.Format("2006-1-02 15:04:05")

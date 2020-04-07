@@ -66,7 +66,7 @@ func AddPreview(video_name, video_content, video_img string, tag_id int) bool {
 		Video_Imgurl:  video_img,
 		Play_Sum:      0,
 		Star_Sum:      0,
-		Video_Isvip:   0,
+		Video_Isvip:   1,
 	})
 	return true
 }

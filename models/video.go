@@ -80,6 +80,7 @@ func AddVideo(video_name, video_info, video_url, actor, created_time string, tag
 		Star_Sum:     0,
 		Content_Sum:  0,
 		Content:      nil,
+		Video_Isvip:  1,
 	})
 	return true
 }

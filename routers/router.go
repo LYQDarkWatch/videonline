@@ -66,9 +66,6 @@ func InitRouter() *gin.Engine {
 		//获取最新视频
 		apiv1.GET("/video/newvideo", v1.GetNewVideo)
 
-		//获取视频列表
-		apiv1.GET("videos", v1.GetVideos)
-
 		//删除评论
 		apiv1.GET("/video/deletecontent", v1.DeleteContent)
 

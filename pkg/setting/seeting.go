@@ -63,7 +63,7 @@ func LoadApp() {
 }
 
 func LoadBucket() {
-	bucketFillDuring := time.Millisecond * 2000
+	bucketFillDuring := time.Millisecond * 20000
 	bucketMax := 2
 	TokenBucket = ratelimit.NewBucket(bucketFillDuring, int64(bucketMax))
 }

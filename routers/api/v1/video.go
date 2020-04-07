@@ -20,13 +20,9 @@ func GetVideoByID(c *gin.Context) {
 	println(id)
 	code := error.INVALID_PARAMS
 	var data interface{}
-	//if models.ExistVideoByID(id) == true {
 	models.VideoPlaySum(id)
 	data = models.GetVideoByID(id)
 	code = error.SUCCESS
-	//} else {
-	//	code = error.ERROR_NOT_EXIST_ARTICLE
-	//}
 	c.JSON(http.StatusOK, gin.H{
 		"code": code,
 		"msg":  error.GetMsg(code),
@@ -46,11 +42,6 @@ func GetVideosByTag(c *gin.Context) {
 		"msg":  error.GetMsg(code),
 		"data": data,
 	})
-}
-
-//获取多个视频
-func GetVideos(c *gin.Context) {
-
 }
 
 //获取所有免费视频
@@ -93,10 +84,8 @@ type videos struct {
 
 //新增视频
 func AddVideo(c *gin.Context) {
-
 	var video videos
 	c.BindJSON(&video)
-
 	name := video.Video_Name
 	content := video.Video_Content
 	info := video.Video_Info
@@ -108,6 +97,13 @@ func AddVideo(c *gin.Context) {
 	println("tag_name", tag_name)
 	tag_id := models.FindTagBYID(tag_name)
 	println("tag_id: ", tag_id)
+	if tag_id == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"code": 588,
+			"msg":  "填写分类标签不存在，请重新填写",
+		})
+		return
+	}
 	timeNow := time.Now().Unix()
 	time := time.Unix(timeNow, 0)
 	createdtime := time.Format("2006-1-02 15:04:05")
@@ -164,18 +160,18 @@ func SearchVideo(c *gin.Context) {
 //播放视频
 func StreamHandler(c *gin.Context) {
 	available := setting.TokenBucket.TakeAvailable(1)
+	println("可用令牌：", available)
 	if available <= 0 {
 		c.JSON(http.StatusOK, gin.H{
-			"code": 500,
+			"code": 505,
 			"msg":  "超出播放限制",
 		})
-
+		c.Abort()
 	} else {
 		vname := c.Query("vname")
 		vl := VIDEO_DIR + vname
 		println(vl)
 		video, err := os.Open(vl)
-
 		if err != nil {
 			log.Println(err)
 			return
